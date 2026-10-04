@@ -1,8 +1,97 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>避難所検索</h2>
-<p>登録されている避難所を確認できます。</p>
+<style>
+  .search-box {
+    max-width: 620px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #dfe5ea;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(14, 40, 70, 0.06);
+  }
 
-<p><a href="/all_shelters">全施設一覧</a></p>
+  .search-box h2 {
+    margin-top: 0;
+    color: #0d4f8a;
+  }
+
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: #1f2d3d;
+  }
+
+  .field select,
+  .field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cfd8e2;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+  }
+
+  .primary-btn {
+    background: #0d4f8a;
+    color: #fff;
+  }
+
+  .secondary-btn {
+    background: #edf4fb;
+    color: #0d4f8a;
+    border: 1px solid #d4e5f8;
+  }
+</style>
+
+<div class="search-box">
+  <h2>避難所検索</h2>
+  <p>避難先の条件を選んで、利用可能な施設を確認できます。</p>
+
+  <form class="search-form" method="get" action="/search_results">
+    <div class="field">
+      <label for="district">地区</label>
+      <select id="district" name="district">
+        <option value="">すべて</option>
+        <option value="青森市">青森市</option>
+        <option value="八戸市">八戸市</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="keyword">施設名</label>
+      <input id="keyword" name="keyword" type="text" placeholder="例：青森市総合福祉センター" />
+    </div>
+
+    <div class="search-actions">
+      <button type="submit" class="primary-btn">検索する</button>
+      <a class="secondary-btn" href="/all_shelters">全施設一覧</a>
+    </div>
+  </form>
+</div>
 {% endblock %}

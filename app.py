@@ -153,6 +153,72 @@ def filter_shelters(district=None):
     return [s for s in shelters if not district or s.get('district') == district]
 
 
+def get_dummy_search_results(district=None):
+    """避難所検索結果画面の仮データを返す。登録画面連携は後続対応とする。"""
+    results = [
+        {
+            "name": "青森市総合福祉センター",
+            "district": "青森市",
+            "address": "青森市本町1-1",
+            "status": "開設中",
+            "capacity": 120,
+            "occupants": 43,
+            "congestion": "普通",
+            "vacancy": "空きあり",
+            "facilities": ["pet", "barrier_free", "wheelchair", "child"]
+        },
+        {
+            "name": "青森市立北中学校",
+            "district": "青森市",
+            "address": "青森市新城2-8",
+            "status": "開設中",
+            "capacity": 200,
+            "occupants": 158,
+            "congestion": "混雑",
+            "vacancy": "空き少なめ",
+            "facilities": ["barrier_free", "wheelchair"]
+        },
+        {
+            "name": "青森市民体育館",
+            "district": "青森市",
+            "address": "青森市大字浜田3-15",
+            "status": "一部休止",
+            "capacity": 150,
+            "occupants": 142,
+            "congestion": "ほぼ満室",
+            "vacancy": "満室に近い",
+            "facilities": ["pet", "child"]
+        },
+        {
+            "name": "東青森小学校",
+            "district": "青森市",
+            "address": "青森市東田町4-16",
+            "status": "開設中",
+            "capacity": 90,
+            "occupants": 18,
+            "congestion": "空いている",
+            "vacancy": "空きあり",
+            "facilities": ["barrier_free", "child", "wheelchair"]
+        },
+        {
+            "name": "大野小学校",
+            "district": "八戸市",
+            "address": "八戸市大野1-10",
+            "status": "開設中",
+            "capacity": 100,
+            "occupants": 72,
+            "congestion": "やや混雑",
+            "vacancy": "空き少なめ",
+            "facilities": ["pet", "barrier_free"]
+        }
+    ]
+
+    if district:
+        district = district.strip()
+        return [r for r in results if r.get('district') == district or district in r.get('name', '') or district in r.get('address', '')]
+    return results
+
+
 def parse_area_warnings(warning_data):
     """気象庁の新形式JSONから対象市区町村の発表・継続中の情報を抽出する"""
     if not isinstance(warning_data, list):
@@ -320,7 +386,7 @@ def shelter_search():
 # 全施設一覧ページ
 @app.route('/all_shelters')
 def all_shelters():
-    return render_template('search_results.html', results=shelters)
+    return render_template('search_results.html', results=get_dummy_search_results())
 
 
 # 指示ボード：住民向けの指示を一覧で確認する
@@ -333,8 +399,9 @@ def board():
 # 検索結果ページ：templates/search_results.html を返す
 @app.route('/search_results')
 def search_results():
-    results = filter_shelters(request.args.get('district'))
-    return render_template('search_results.html', results=results)
+    district = request.args.get('district', '').strip()
+    results = get_dummy_search_results(district)
+    return render_template('search_results.html', results=results, district=district)
 
 # JSON API：/shelters?district=地区名
 @app.route('/shelters', methods=['GET'])
